@@ -8,11 +8,17 @@
  * since some of these tests may require DOM elements. We want
  * to ensure they don't run until the DOM is ready.
  */
+
+
 $(function() {
     /* This is our first test suite - a test suite just contains
-    * a related set of tests. This suite is all about the RSS
-    * feeds definitions, the allFeeds variable in our application.
-    */
+     * a related set of tests. This suite is all about the RSS
+     * feeds definitions, the allFeeds variable in our application.
+     */
+
+    function validateUrl(value) {
+        return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
+    }
     describe('RSS Feeds', function() {
         /* This is our first test - it tests to make sure that the
          * allFeeds variable has been defined and that it is not
@@ -27,46 +33,90 @@ $(function() {
         });
 
 
-        /* TODO: Write a test that loops through each feed
-         * in the allFeeds object and ensures it has a URL defined
-         * and that the URL is not empty.
-         */
+        describe('have name property', function() {
+            it('which is defined', function() {
+                allFeeds.forEach(function(element, index) {
+                    expect(element.name).toBeDefined();
+                });
+            });
+            it('which is not empty', function() {
+                allFeeds.forEach(function(element, index) {
+                    expect(element.name.length).not.toBe(0);
+                });
+            });
+        });
 
-
-        /* TODO: Write a test that loops through each feed
-         * in the allFeeds object and ensures it has a name defined
-         * and that the name is not empty.
-         */
+        describe('have url property', function() {
+            it('which is defined', function() {
+                allFeeds.forEach(function(element, index) {
+                    expect(element.url).toBeDefined();
+                });
+            });
+            it('which is not empty', function() {
+                allFeeds.forEach(function(element, index) {
+                    expect(element.url.length).not.toBe(0);
+                });
+            });
+            it('which is valid', function() {
+                allFeeds.forEach(function(element, index) {
+                    expect(validateUrl(element.url)).toBe(true);
+                });
+            });
+        });
     });
 
 
-    /* TODO: Write a new test suite named "The menu" */
+    describe('The menu', function() {
+        var bodyClass = document.body.classList
 
-        /* TODO: Write a test that ensures the menu element is
-         * hidden by default. You'll have to analyze the HTML and
-         * the CSS to determine how we're performing the
-         * hiding/showing of the menu element.
-         */
 
-         /* TODO: Write a test that ensures the menu changes
-          * visibility when the menu icon is clicked. This test
-          * should have two expectations: does the menu display when
-          * clicked and does it hide when clicked again.
-          */
+        var simulateClick = function() {
+            $('.menu-icon-link').click();
+        };
+        it('is hidden', function() {
+            expect(bodyClass).toContain('menu-hidden');
+        });
 
-    /* TODO: Write a new test suite named "Initial Entries" */
+        it('can toggle visiblity correctly', function() {
+            simulateClick();
+            expect(bodyClass).not.toContain('menu-hidden');
+            simulateClick();
+            expect(bodyClass).toContain('menu-hidden');
+        });
 
-        /* TODO: Write a test that ensures when the loadFeed
-         * function is called and completes its work, there is at least
-         * a single .entry element within the .feed container.
-         * Remember, loadFeed() is asynchronous so this test will require
-         * the use of Jasmine's beforeEach and asynchronous done() function.
-         */
 
-    /* TODO: Write a new test suite named "New Feed Selection"
+    });
 
-        /* TODO: Write a test that ensures when a new feed is loaded
-         * by the loadFeed function that the content actually changes.
-         * Remember, loadFeed() is asynchronous.
-         */
+    describe('Initial Entries', function() {
+
+        beforeEach(function(done) {
+            loadFeed(0, function() {
+                done();
+            });
+        });
+
+        it('have at least one entry', function(done) {
+            var childList = $('.feed').children('.entry-link');
+            expect(childList.length).toBeGreaterThan(0);
+            done();
+        });
+    });
+
+    describe('New Feed Selection', function() {
+        var prev, newF;
+        beforeEach(function(done) {
+            loadFeed(0, function() {
+                prev = $('.feed').html();
+                loadFeed(1, function() {
+                    newF = $('.feed').html();
+                    done();
+                });
+            });
+        });
+
+        it('has different content', function(done) {
+            expect(prev).not.toMatch(newF);
+            done();
+        });
+    });
 }());
