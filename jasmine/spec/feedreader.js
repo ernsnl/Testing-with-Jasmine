@@ -96,7 +96,7 @@ $(function() {
         });
 
         it('have at least one entry', function(done) {
-            var childList = $('.feed').children('.entry-link');
+            var childList = $('.feed').find('.entry');
             expect(childList.length).toBeGreaterThan(0);
             done();
         });
